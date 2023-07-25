@@ -13,10 +13,20 @@
   "keywords": [
     "cli",
     "build tool",
-    "vite"
+    "vite",
+    "o'clock",
+    "oclock"
   ],
-  "author": "Fabien Tavernier @FabienTavernier",
+  "author": {
+    "name": "Fabien Tavernier",
+    "email": "dev@oclock.io"
+  },
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:FabienTavernier/o-vite.git"
+  },
+  "homepage": "https://github.com/FabienTavernier/o-vite.git#readme",
   "dependencies": {
     "arg": "^5.0.2",
     "boxen": "^7.1.1",

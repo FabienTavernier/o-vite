@@ -1,14 +1,21 @@
 {
-  "name": "o-vite",
+  "name": "create-o-vite",
   "type": "module",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Installer rapidement un environnement de développement pré-configuré avec Vite",
   "main": "o-vite.js",
   "bin": {
-    "o-vite": "./bin/o-vite.js"
+    "create-o-vite": "./index.js"
   },
+  "files": [
+    "index.js",
+    "src"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
   },
   "keywords": [
     "cli",

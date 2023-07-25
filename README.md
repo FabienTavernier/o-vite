@@ -50,7 +50,7 @@ Puis le lancer :
 o-vite [options] [nom|SSH]
 ```
 
-_Voir les [options](#Options) disponibles ci-dessous_
+_Voir les [options](#options) disponibles ci-dessous_
 
 Mais nous vous **recommandons** de l'utiliser depuis NPM directement,
 pour être sûr d'avoir la dernière version :

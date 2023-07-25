@@ -1,0 +1,28 @@
+{
+  "name": "o-vite-vanilla",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf dist node_modules yarn.lock package-lock.json",
+    "update": "ncu",
+    "update:do": "ncu -u && yarn"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "npm-check-updates": "^16.10.13",
+    "prettier": "^3.0.0",
+    "sass": "^1.63.6",
+    "vite": "^4.4.0"
+  }
+}

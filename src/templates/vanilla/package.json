@@ -1,0 +1,20 @@
+{
+  "name": "o-vite-vanilla",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "clean:all": "rm -rf dist node_modules yarn.lock package-lock.json",
+    "update": "ncu",
+    "update:do": "ncu -u && yarn"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^16.10.13",
+    "sass": "^1.63.6",
+    "vite": "^4.4.0"
+  }
+}

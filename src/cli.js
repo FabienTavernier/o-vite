@@ -29,6 +29,7 @@ import {
 
 
 function getOptionsFromArguments(rawArgs) {
+  console.log(32, rawArgs);
   const args = arg(
     {
       '--yes': Boolean,
@@ -48,6 +49,7 @@ function getOptionsFromArguments(rawArgs) {
       argv: rawArgs.slice(2),
     }
   );
+  console.log(52, args);
 
   return {
     skipPrompts: args['--yes'] || Object.keys(args).length > 1,

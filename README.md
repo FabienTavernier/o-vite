@@ -38,6 +38,29 @@ Il est aussi possible de :
 
 ## Utilisation
 
+### Depuis NPM
+
+Nous vous **recommandons** de l'utiliser depuis NPM directement,
+pour être sûr d'avoir la dernière version :
+
+```bash
+npm create o-vite@latest [-- [options] [nom|SSH]]
+```
+
+> Notez le `--` qui permet de séparer les paramètres passés à la commande
+> `npm` et ceux passer au script
+
+Exemples :
+
+```bash
+npm create o-vite@latest -- my-project
+npm create o-vite@latest -- -t my-project
+```
+
+_Voir les [options](#options) disponibles et le dossier de [destination](#destination) ci-dessous_
+
+### En global
+
 Installer cet outil globalement avec NPM :
 
 ```bash
@@ -50,14 +73,7 @@ Puis le lancer :
 o-vite [options] [nom|SSH]
 ```
 
-_Voir les [options](#options) disponibles ci-dessous_
-
-Mais nous vous **recommandons** de l'utiliser depuis NPM directement,
-pour être sûr d'avoir la dernière version :
-
-```bash
-npm create o-vite
-```
+### Commun
 
 Dans les deux cas, il suffit ensuite de suivre les instructions dans le terminal !
 
@@ -68,7 +84,7 @@ la génération d'un premier _commit_ et l'ouverture dans VS Code
 et le navigateur
 
 ```bash
-npm create o-vite -react
+npm create o-vite@latest -- -react
 ```
 
 > ATTENTION ici `-react` ne signifie pas « je veux React », mais :
@@ -95,8 +111,8 @@ Le dossier de destination peut être personnalisé. Il faut ajouter un second ar
 à la commande de base :
 
 ```bash
-npm create o-vite my-project
-npm create o-vite /dev/projects/my-app
+npm create o-vite@latest -- my-project
+npm create o-vite@latest -- /dev/projects/my-app
 ```
 
 Comme vous le voyez, vous pouvez renseigner un chemin ; le dossier de destination sera
@@ -112,7 +128,7 @@ distant dans le dossier où vous appeler l'outil.
 Exemple :
 
 ```bash
-user@DESKTOP:/var/www/html/S01$ npm create o-vite my-ssh-address.git
+user@DESKTOP:/var/www/html/S01$ npm create o-vite@latest -- my-ssh-address.git
 ```
 
 créera un dossier `/var/www/html/S01/my-ssh-address`

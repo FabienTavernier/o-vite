@@ -108,3 +108,32 @@ export function banner(msg) {
   });
   log(text);
 }
+
+export function border(msg) {
+  const text = boxen(msg, {
+    borderColor: 'blue',
+    borderStyle: {
+      topLeft: '',
+      topRight: '',
+      bottomLeft: '',
+      bottomRight: '',
+      top: '',
+      bottom: '',
+      left: '│',
+      right: ''
+    },
+    margin: {
+      top: 0,
+      bottom: 0,
+      left: 3,
+      right: 0
+    },
+    padding: {
+      top: 0,
+      bottom: 0,
+      left: 1,
+      right: 0
+    },
+  });
+  log(text);
+}

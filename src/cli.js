@@ -1,6 +1,21 @@
+/**
+ * Table des codes erreur
+ * 
+ * | code | erreur                                              |
+ * |------|-----------------------------------------------------|
+ * |  110 | Le dossier de destination existe déjà               |
+ * |  120 | Le dépôt Git n'existe pas ou est inaccessible       |
+ * |  121 | Échec du clonage du dépôt Git                       |
+ * |  130 | Échec lors de la création du dossier de destination |
+ * |  210 | Échec lors de la copie du template                  |
+ * |  220 | Échec lors de l'installation des dépendances        |
+ * |  230 | Échec lors du commit de l'installation              |
+ */
+
 import arg from 'arg';
 import { cwd } from 'process';
 import path from 'path';
+import os from 'os';
 import readline from 'readline';
 import inquirer from 'inquirer';
 import { oraPromise } from 'ora';
@@ -43,6 +58,8 @@ function getOptionsFromArguments(rawArgs) {
       '-a': '--access',
       '-c': '--commit',
       '-t': '--typescript',
+
+      '--debug': Boolean,
     },
     {
       argv: rawArgs.slice(2),
@@ -56,6 +73,7 @@ function getOptionsFromArguments(rawArgs) {
     access: args['--access'] || false,
     commit: args['--commit'] || false,
     typescript: args['--typescript'] || false,
+    debug: args['--debug'] || false,
     project: args._[0],
   };
 }
@@ -138,14 +156,20 @@ async function promptForMissingOptions(options) {
   };
 }
 
-async function getTargetDirectory(project) {
+async function getTargetDirectory(project, debug) {
   if (project === '.') {
     return '';
   }
 
+  if (debug) {
+    return project.endsWith('.git')
+      ? path.basename(project, '.git')
+      : project;
+  }
+
   if (await fs.exists(project)) {
     msg.error(ERROR_DIR_EXISTS);
-    process.exit(1);
+    process.exit(110);
   }
 
   if (project.endsWith('.git')) {
@@ -153,14 +177,14 @@ async function getTargetDirectory(project) {
 
     if (!exists) {
       msg.error(ERROR_GIT_EXISTS);
-      process.exit(1);
+      process.exit(120);
     }
 
     const cloned = await git.clone(project);
 
     if (!cloned) {
       msg.error(ERROR_GIT_CLONE);
-      process.exit(1);
+      process.exit(121);
     }
 
     return cloned;
@@ -170,23 +194,13 @@ async function getTargetDirectory(project) {
 
   if (!created) {
     msg.error(ERROR_DIR_CREATE);
-    process.exit(1);
+    process.exit(130);
   }
 
   return created;
 }
 
 function sayHello(config, targetDirectory) {
-  // const choices = (
-  //   Object.entries(config)
-  //     .map(
-  //       ([key, value]) => (
-  //         value ? (['project', 'template'].includes(key) ? value : key) : false
-  //       )
-  //     )
-  //     .filter((choice) => choice)
-  // );
-
   // on récupère le chemin du dossier final
   const target = path.resolve(cwd(), targetDirectory);
   
@@ -216,6 +230,76 @@ function sayHello(config, targetDirectory) {
     msg.get('template : ', ['white']) +
     msg.get(tpl.join(' + '), ['grey'])
   );
+}
+
+async function sayDebug(config, targetDirectory)  {
+  // on récupère le chemin du dossier final
+  const target = path.resolve(cwd(), targetDirectory);
+  
+  // on récupère les options
+  const options = Object.entries(config).map(([key, value]) => `${key}: ${value}`);
+
+  // on récupère la version de Node
+  const nodeVersion = process.version;
+  const isNodeEven = nodeVersion.match(/v(\d+)/)[1] % 2 === 0;
+
+  // on récupère l'e-mail associé au compte GH
+  const email = await git.getEmail();
+
+  // on vérifie si l'adresse SSH correspond à un dépôt Git
+  let gitMessage = '';
+  if (config.project.endsWith('.git')) {
+    const exists = await git.exists(config.project);
+
+    gitMessage = (
+      msg.get('\n') +
+      msg.get('dépôt Git : ', ['white']) +
+      msg.get(exists ? 'vérifié' : 'ERREUR', [exists ? 'green' : 'red'])
+    );
+  }
+
+  // on vérifie si le dossier de destination existe déjà
+  const targetIcon = await fs.exists(target)
+    ? msg.get(' ✖', ['red'])
+    : msg.get(' ✔', ['green']);
+
+  // OS
+  const osData = [
+    `os : ${os.type()} ${os.release()}`,
+    `terminal : ${process.env.TERM_PROGRAM || process.env.TERM}`,
+    `shell : ${process.env.SHELL}`,
+  ];
+  
+  // on affiche l'en-tête
+  msg.banner(
+    msg.get("O", ['cyan', 'bold']) +
+    msg.get("'", ['red', 'bold']) +
+    msg.get("VITE ", ['cyan', 'bold']) +
+    msg.get(`v${fs.appVersion()}`, ['grey']) +
+    msg.get('\n\n') +
+    msg.get('— Mode DEBUG —', ['yellow']) +
+    msg.get('\n\n') +
+    msg.get('node : ', ['white']) +
+    msg.get(nodeVersion, [isNodeEven ? 'green' : 'red']) +
+    msg.get('\n') +
+    msg.get('email : ', ['white']) +
+    msg.get(email, [email === 'inconnu' ? 'red' : 'green']) +
+    gitMessage +
+    msg.get('\n\n') +
+    msg.get('dossier : ', ['white']) +
+    msg.get(target, ['grey']) +
+    targetIcon +
+    msg.get('\n\n') +
+    msg.get('options : ', ['white']) +
+    msg.get('\n') +
+    msg.get(options.join('\n'), ['grey']) +
+    msg.get('\n\n') +
+    msg.get('informations système : ', ['white']) +
+    msg.get('\n') +
+    msg.get(osData.join('\n'), ['grey'])
+  );
+
+  process.exit();
 }
 
 async function copyFiles(config, targetDirectory) {
@@ -258,12 +342,47 @@ function displayShortcuts() {
   );
 }
 
+function displayErrorOnExit(exitCode) {
+  msg.paint('');
+  msg.info("Il semble qu'une erreur soit survenue pendant le processus");
+
+  msg.border(
+    msg.get(
+      "Si tu es bloqué, n'hésite pas à retaper ta commande en y ajoutant ",
+      ['grey']
+    ) +
+    msg.get('--debug', ['yellow']) +
+    msg.get(
+      ", d'en faire une capture d'écran et de l'envoyer à ton formateur/tuteur avec le code ",
+      ['grey']
+    ) +
+    msg.get(exitCode, ['red', 'bold']) +
+    msg.get(
+      " ou la dernière erreur retournée",
+      ['grey']
+    ) +
+    msg.get('\n') + 
+    msg.get(
+      "exemple : npm create o-vite@latest -- -react my-project --debug",
+      ['grey']
+    )
+  );
+}
+
 export default async function cli(args) {
+  process.on('exit', (exitCode) => {
+    if (exitCode) {
+      displayErrorOnExit(exitCode);
+    }
+  });
+
   const options = getOptionsFromArguments(args);
   const config = await promptForMissingOptions(options);
-  const targetDirectory = await getTargetDirectory(config.project);
+  const targetDirectory = await getTargetDirectory(config.project, config.debug);
 
-  sayHello(config, targetDirectory);
+  config.debug
+    ? await sayDebug(config, targetDirectory)
+    : sayHello(config, targetDirectory);
 
   // on copie les dossiers/fichiers depuis le template
   const copied = await oraPromise(copyFiles(config, targetDirectory), INFO_TPL_COPY);
@@ -274,7 +393,7 @@ export default async function cli(args) {
 
     msg.error(ERROR_TPL_COPY);
     msg.paint(JSON.stringify(copied, null, 2), ['red', 'dim']);
-    process.exit(1);
+    process.exit(210);
   }
 
   // on se met dans le dossier cible pour la suite
@@ -286,7 +405,7 @@ export default async function cli(args) {
   } catch (err) {
     msg.error(ERROR_YARN_INSTALL);
     msg.paint(JSON.stringify(err, null, 2), ['red', 'dim']);
-    process.exit(1);
+    process.exit(220);
   }
 
   // on valide les modifications
@@ -296,7 +415,7 @@ export default async function cli(args) {
     } catch (err) {
       msg.error(ERROR_GIT_COMMIT);
       msg.paint(JSON.stringify(err, null, 2), ['red', 'dim']);
-      process.exit(1);
+      process.exit(230);
     }
   }
 

@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, execSync } from 'child_process';
 import path from 'path';
 
 /**
@@ -131,6 +131,24 @@ function push() {
   });
 }
 
+/**
+ * Récupère l'e-mail associé à Git
+ * 
+ * @returns {Promise<string | 'inconnu'>}
+ */
+function getEmail() {  
+  return new Promise((resolve) => {
+    const command = 'git config --get user.email';
+    exec(command, (error, stdout, stderr) => {
+      if (error || stderr) {
+        resolve('inconnu');
+      } else {
+        resolve(stdout.trim());
+      }
+    });
+  });
+}
+
 export {
   exists,
   clone,
@@ -138,4 +156,5 @@ export {
   add,
   commit,
   push,
+  getEmail,
 }

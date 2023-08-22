@@ -144,6 +144,8 @@ créera un dossier `/var/www/html/S01/my-ssh-address`
 | --eslint     | -e    | `false` | Faut-il installer ESLint (Airbnb) ?                      |
 | --commit     | -c    | `false` | Faut-il _commit_ l'installation de Vite ?                |
 | --access     | -a    | `false` | Faut-il ouvrir le projet dans VS Code et le navigateur ? |
+|              |       |         |                                                          |
+| --debug      |       |         | Affiche des informations pour faciliter le débogage      |
 
 > si aucune option est passée, le formulaire s'affiche  
 > si au moins une option est passée, les autres prennent leur valeur par défaut

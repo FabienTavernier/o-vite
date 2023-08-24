@@ -48,7 +48,7 @@ npm create o-vite@latest [-- [options] [nom|SSH]]
 ```
 
 > Notez le `--` qui permet de séparer les paramètres passés à la commande
-> `npm` et ceux passer au script
+> `npm` et ceux passés au script
 
 Exemples :
 

@@ -1,7 +1,7 @@
 {
   "name": "create-o-vite",
   "type": "module",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Installer rapidement un environnement de développement pré-configuré avec Vite",
   "main": "o-vite.js",
   "bin": {

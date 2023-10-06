@@ -156,6 +156,25 @@ créera un dossier `/var/www/html/S01/my-ssh-address`
 > si aucune option est passée, le formulaire s'affiche  
 > si au moins une option est passée, les autres prennent leur valeur par défaut
 
+## Mettre à jour les dépendances
+
+Avec PNPM :
+
+```bash
+# https://pnpm.io/fr/cli/update
+pnpm up [-i]
+```
+
+Avec NPM :
+
+```bash
+# Lister avec npm-check-updates
+# https://www.npmjs.com/package/npm-check-updates
+npm run update
+# Installer
+npm run update:do
+```
+
 ## Bonus
 
 L'outil installe automatiquement des recommandations d'extensions VS Code.  

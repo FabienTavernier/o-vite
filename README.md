@@ -38,23 +38,29 @@ Il est aussi possible de :
 
 ## Utilisation
 
+> Pour gagner en performance et en poids de fichiers, nous vous invitons à utiliser
+> [PNPM](https://pnpm.io/fr/) ; son installation vous sera proposer dans le script.
+> Vous pouvez, bien entendu, préférer NPM.
+
 ### Depuis NPM
 
 Nous vous **recommandons** de l'utiliser depuis NPM directement,
 pour être sûr d'avoir la dernière version :
 
 ```bash
+pnpm create o-vite@latest [-- [options] [nom|SSH]]
+# ou
 npm create o-vite@latest [-- [options] [nom|SSH]]
 ```
 
 > Notez le `--` qui permet de séparer les paramètres passés à la commande
-> `npm` et ceux passés au script
+> `pnpm` et ceux passés au script
 
 Exemples :
 
 ```bash
-npm create o-vite@latest -- my-project
-npm create o-vite@latest -- -t my-project
+pnpm create o-vite@latest -- my-project
+pnpm create o-vite@latest -- -t my-project
 ```
 
 _Voir les [options](#options) disponibles et le dossier de [destination](#destination) ci-dessous_
@@ -84,7 +90,7 @@ la génération d'un premier _commit_ et l'ouverture dans VS Code
 et le navigateur
 
 ```bash
-npm create o-vite@latest -- -react
+pnpm create o-vite@latest -- -react
 ```
 
 > ATTENTION ici `-react` ne signifie pas « je veux React », mais :
@@ -111,8 +117,8 @@ Le dossier de destination peut être personnalisé. Il faut ajouter un second ar
 à la commande de base :
 
 ```bash
-npm create o-vite@latest -- my-project
-npm create o-vite@latest -- /dev/projects/my-app
+pnpm create o-vite@latest -- my-project
+pnpm create o-vite@latest -- /dev/projects/my-app
 ```
 
 Comme vous le voyez, vous pouvez renseigner un chemin ; le dossier de destination sera
@@ -128,7 +134,7 @@ distant dans le dossier où vous appeler l'outil.
 Exemple :
 
 ```bash
-user@DESKTOP:/var/www/html/S01$ npm create o-vite@latest -- my-ssh-address.git
+user@DESKTOP:/var/www/html/S01$ pnpm create o-vite@latest -- my-ssh-address.git
 ```
 
 créera un dossier `/var/www/html/S01/my-ssh-address`

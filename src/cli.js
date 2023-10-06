@@ -32,10 +32,10 @@ import {
   ERROR_GIT_CLONE,
   ERROR_GIT_EXISTS,
   ERROR_TPL_COPY,
-  ERROR_YARN_INSTALL,
+  ERROR_DEPS_INSTALL,
   ERROR_GIT_COMMIT,
   INFO_TPL_COPY,
-  INFO_YARN_INSTALL,
+  INFO_DEPS_INSTALL,
   INFO_GIT_COMMIT,
   INFO_OPEN_VSCODE,
   INFO_OPEN_BROWSER,
@@ -309,12 +309,12 @@ async function copyFiles(config, targetDirectory) {
   ]);
 }
 
-function displayNextSteps(targetDirectory) {
+function displayNextSteps(targetDirectory, pckName) {
   msg.paint('');
   msg.info('La prochaine étape ?');
   msg.paint(`    cd ${targetDirectory}`);
   msg.paint(`    code .`);
-  msg.paint(`    yarn dev`);
+  msg.paint(`    ${pckName} run dev`);
 }
 
 function displayShortcuts() {
@@ -376,6 +376,8 @@ export default async function cli(args) {
     }
   });
 
+  let pckName = 'npm';
+
   const options = getOptionsFromArguments(args);
   const config = await promptForMissingOptions(options);
   const targetDirectory = await getTargetDirectory(config.project, config.debug);
@@ -401,10 +403,17 @@ export default async function cli(args) {
 
   // on installe les dépendances
   try {
-    await oraPromise(cmd.install(), INFO_YARN_INSTALL);
+    pckName = await cmd.getPackageName();
+    await oraPromise(cmd.install(pckName), INFO_DEPS_INSTALL);
   } catch (err) {
-    msg.error(ERROR_YARN_INSTALL);
-    msg.paint(JSON.stringify(err, null, 2), ['red', 'dim']);
+    msg.error(ERROR_DEPS_INSTALL);
+    console.log(412, err);
+    const errorStr = typeof err === 'string'
+    ? err
+    : JSON.stringify(err, null, 2);
+    console.log(416, errorStr);
+
+    msg.paint(errorStr, ['red', 'dim']);
     process.exit(220);
   }
 
@@ -422,7 +431,7 @@ export default async function cli(args) {
   // on ouvre le projet dans VS Code et le navigateur
   if (config.access) {
     await oraPromise(cmd.code(), INFO_OPEN_VSCODE);
-    await oraPromise(cmd.serve(), INFO_OPEN_BROWSER);
+    await oraPromise(cmd.serve(pckName), INFO_OPEN_BROWSER);
   }
   
   msg.paint('');
@@ -430,9 +439,24 @@ export default async function cli(args) {
   
   // message de fin 
   if (!config.access) {
-    displayNextSteps(targetDirectory);
+    displayNextSteps(targetDirectory, pckName);
   }
   else {
     displayShortcuts();
   }
 }
+
+if (!('toJSON' in Error.prototype))
+Object.defineProperty(Error.prototype, 'toJSON', {
+    value: function () {
+        const alt = {};
+
+        Object.getOwnPropertyNames(this).forEach(function (key) {
+            alt[key] = this[key];
+        }, this);
+
+        return alt;
+    },
+    configurable: true,
+    writable: true,
+});

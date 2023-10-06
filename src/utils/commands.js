@@ -1,16 +1,72 @@
 import os from 'os';
 import { exec } from 'child_process';
+import inquirer from 'inquirer';
 
 import * as git from './git.js';
 
 /**
- * Installe les dépendances avec Yarn
+ * Propose l'installation de PNPM
  * 
  * @returns {Promise}
  */
-function install() {
+async function installPNPM() {
+  const questions = [
+    {
+        type: 'confirm',
+        name: 'pnpm',
+        message: 'Voulez-vous installer PNPM ?',
+        default: true,
+    },
+  ];
+
+  return inquirer.prompt(questions)
+    .then((answers) => {
+      if (answers.pnpm) {
+        return new Promise((resolve) => {
+          const command = `npm install -g pnpm`;
+          exec(command, (error) => {
+            if (error) {
+              console.error('Erreur lors de l\'installation de PNPM :', error.message);
+              resolve('npm');
+            }
+      
+            resolve('pnpm');
+          });
+        });
+      }
+
+      return 'npm';
+    });
+}
+
+/**
+ * Retourne le nom du package manager
+ * 
+ * @returns {Promise}
+ */
+function getPackageName() {
+  return new Promise((resolve) => {
+    const command = `pnpm --version`;
+    exec(command, (error) => {
+      if (error) {
+        // resolve('npm');
+        resolve(installPNPM());
+      }
+
+      resolve('pnpm');
+    });
+  });
+}
+
+/**
+ * Installe les dépendances avec PNPM ou NPM
+ * 
+ * @param {string} pckName 'pnpm' || 'npm' 
+ * @returns {Promise}
+ */
+function install(pckName) {
   return new Promise((resolve, reject) => {
-    const command = `yarn`;
+    const command = `${pckName} install`;
     exec(command, (error) => {
       if (error) {
         reject(error);
@@ -27,7 +83,7 @@ function install() {
  * @returns {Promise}
  */
 function commit() {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     return git.init()
       .then(() => git.add())
       .then(() => git.commit('Install Vite'))
@@ -58,11 +114,12 @@ function code() {
 /**
  * Lance le serveur de développement de Vite
  * 
+ * @param {string} pckName 'pnpm' || 'npm' 
  * @returns {Promise}
  */
-function serve() {
+function serve(pckName) {
   return new Promise((resolve, reject) => {
-    const command = `yarn dev --open`;
+    const command = `${pckName} run dev --open`;
     exec(command, (error) => {
       if (error) {
         reject(error);
@@ -121,6 +178,7 @@ async function quit() {
 }
 
 export {
+  getPackageName,
   install,
   commit,
   code,

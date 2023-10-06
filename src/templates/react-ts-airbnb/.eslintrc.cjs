@@ -12,6 +12,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended', // must be the last one
   ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
@@ -20,10 +21,14 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
   },
   plugins: ['react-refresh', '@typescript-eslint', 'prettier'],
   rules: {
-    'react-refresh/only-export-components': 'warn',
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
     'react/react-in-jsx-scope': 0,
     'react/jsx-filename-extension': [
       2,

@@ -10,6 +10,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:prettier/recommended', // must be the last one
   ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -20,7 +21,10 @@ module.exports = {
   settings: { react: { version: '18.2' } },
   plugins: ['react-refresh', 'eslint', 'prettier'],
   rules: {
-    'react-refresh/only-export-components': 'warn',
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
     'react/react-in-jsx-scope': 0,
     'react/jsx-filename-extension': [
       2,
